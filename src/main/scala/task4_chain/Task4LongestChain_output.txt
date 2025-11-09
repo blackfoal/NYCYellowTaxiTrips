@@ -1,0 +1,100 @@
+================================================================================
+TASK 4: LONGEST SINGLE-DRIVER CHAIN OF TRIPS
+================================================================================
+
+Assumption: Same driver if:
+  - Next trip's pickup location = Previous trip's dropoff location
+  - Next trip's pickup time < Previous trip's dropoff time + 5 minutes
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOADING AND FILTERING DATA
+--------------------------------------------------------------------------------
+
+Total records: 8049094
+
+Filtering results:
+  Records removed: 80 (0,00%)
+  Valid records: 8049014
+
+Step 1 took 1,36 seconds
+
+--------------------------------------------------------------------------------
+STEP 2: ADDING COMPUTED COLUMNS
+--------------------------------------------------------------------------------
+Purpose: Convert timestamps to Unix seconds for efficient comparisons
+         Add trip_id for tracking individual trips
+
+Trips with valid timestamps: 8048541
+Trips filtered out (outside Sept 2018 or invalid): 473 (0,01%)
+
+Step 2 took 1,16 seconds
+
+--------------------------------------------------------------------------------
+STEP 3: SORTING TRIPS BY PICKUP TIME
+--------------------------------------------------------------------------------
+Purpose: Sort all trips chronologically to enable chain building
+         Add trip_id for tracking and joining
+
+Trips sorted by pickup time
+Sample of first 5 trips:
+Trip ID         PULocationID    DOLocationID    Pickup Time          Dropoff Time        
+------------------------------------------------------------------------------------------
+0               211             198             2018-09-01T00:00     2018-09-01T00:22:41 
+1               163             36              2018-09-01T00:00     2018-09-01T00:48:02 
+2               148             263             2018-09-01T00:00     2018-09-01T00:00    
+3               132             263             2018-09-01T00:00     2018-09-01T00:00    
+4               246             246             2018-09-01T00:00:01  2018-09-01T00:06:13 
+
+Step 3 took 13,64 seconds
+
+--------------------------------------------------------------------------------
+STEP 4: COMPUTING CHAIN LENGTHS (SINGLE-PASS)
+--------------------------------------------------------------------------------
+Purpose: Process all trips chronologically in a single pass
+         Use sliding window buffer to find best predecessor
+         No iterative joins - processes each trip once
+
+Algorithm:
+  1. Sort all trips globally by pickup_unix
+  2. Process trips sequentially in chronological order
+  3. Maintain location-indexed buffer of recent trips (5-minute window)
+  4. For each trip, find best predecessor from buffer
+  5. Compute chain_length = best_prev_chain_length + 1
+
+Note: Isolated trips (no predecessors) will have chain_length = 1
+      They don't affect the longest chain computation
+
+Starting single-pass chain computation on 8048541 trips
+Processing trips chronologically with sliding window buffer...
+
+Maximum chain length found: 13778
+Total trips processed: 8048541
+Average chain length: 6839,91
+
+Step 4 took 211,12 seconds
+
+--------------------------------------------------------------------------------
+STEP 5: RECONSTRUCTING LONGEST CHAIN
+--------------------------------------------------------------------------------
+
+Longest chain ends at trip ID: 94489518817
+Chain length: 13778 trips
+
+Chain contains 13778 trips
+
+Step 5 took 165,70 seconds
+
+================================================================================
+LONGEST SINGLE-DRIVER CHAIN OF TRIPS
+================================================================================
+
+Chain Length: 13778 trips
+Total trips in dataset: 8048541
+Chain represents: 0,1712% of all trips
+
+Chain details saved to: /Users/murat/Desktop/Proton/protoncase/src/main/scala/task4_chain/Task4LongestChain_details.txt
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================

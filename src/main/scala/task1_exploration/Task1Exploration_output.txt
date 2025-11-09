@@ -1,0 +1,222 @@
+
+Loading data from: /Users/murat/Desktop/Proton/yellow_tripdata
+
+================================================================================
+TASK 1: DATA EXPLORATION
+================================================================================
+
+STEP 1: READING DATA
+--------------------------------------------------------------------------------
+
+Using DataLoader utility to load and merge data...
+
+Loading 1 Parquet files from: /Users/murat/Desktop/Proton/yellow_tripdata
+  Processing: yellow_tripdata_2018-09.parquet
+Unioning all files...
+
+Data merged successfully. Total columns: 19
+
+Schema:
+  VendorID                       : LongType
+  tpep_pickup_datetime           : TimestampNTZType
+  tpep_dropoff_datetime          : TimestampNTZType
+  passenger_count                : DoubleType
+  trip_distance                  : DoubleType
+  RatecodeID                     : DoubleType
+  store_and_fwd_flag             : StringType
+  PULocationID                   : LongType
+  DOLocationID                   : LongType
+  payment_type                   : LongType
+  fare_amount                    : DoubleType
+  extra                          : DoubleType
+  mta_tax                        : DoubleType
+  tip_amount                     : DoubleType
+  tolls_amount                   : DoubleType
+  improvement_surcharge          : DoubleType
+  total_amount                   : DoubleType
+  congestion_surcharge           : DoubleType
+  airport_fee                    : IntegerType
+
+Total records: 8049094
+
+================================================================================
+STEP 2: MISSING VALUES ANALYSIS
+================================================================================
+Column                         Null Count      Null %    
+--------------------------------------------------------------------------------
+VendorID                       0               0,00%
+tpep_pickup_datetime           0               0,00%
+tpep_dropoff_datetime          0               0,00%
+passenger_count                8129            0,10%
+trip_distance                  0               0,00%
+RatecodeID                     8129            0,10%
+store_and_fwd_flag             8129            0,10%
+PULocationID                   0               0,00%
+DOLocationID                   0               0,00%
+payment_type                   0               0,00%
+fare_amount                    0               0,00%
+extra                          0               0,00%
+mta_tax                        0               0,00%
+tip_amount                     0               0,00%
+tolls_amount                   0               0,00%
+improvement_surcharge          0               0,00%
+total_amount                   0               0,00%
+congestion_surcharge           8049070         100,00%
+airport_fee                    8049094         100,00%
+
+================================================================================
+STEP 3: COLUMN-LEVEL DISTRIBUTION ANALYSIS
+================================================================================
+
+4.1 DIMENSION VARIABLES - Distribution
+--------------------------------------------------------------------------------
+
+VendorID:
+Value                          Count           Percentage
+--------------------------------------------------------------------------------
+2                              4757772         59,11%
+1                              3211747         39,90%
+4                              79452           0,99%
+5                              123             0,00%
+
+RatecodeID:
+Value                          Count           Percentage
+--------------------------------------------------------------------------------
+1.0                            7780190         96,66%
+2.0                            200626          2,49%
+5.0                            37981           0,47%
+3.0                            16634           0,21%
+NULL                           8129            0,10%
+4.0                            5269            0,07%
+99.0                           203             0,00%
+6.0                            62              0,00%
+
+passenger_count:
+Value                          Count           Percentage
+--------------------------------------------------------------------------------
+1.0                            5719856         71,06%
+2.0                            1193283         14,83%
+5.0                            353097          4,39%
+3.0                            335683          4,17%
+6.0                            213124          2,65%
+4.0                            153803          1,91%
+0.0                            72036           0,89%
+NULL                           8129            0,10%
+7.0                            29              0,00%
+9.0                            28              0,00%
+8.0                            26              0,00%
+
+payment_type:
+Value                          Count           Percentage Description                   
+--------------------------------------------------------------------------------
+1                              5614618         69,75%         Credit card                   
+2                              2373771         29,49%         Cash                          
+3                              40456           0,50%          No charge                     
+4                              12120           0,15%          Dispute                       
+0                              8129            0,10%          Flex Fare trip                
+
+
+4.2 Quantity VARIABLES - Percentile Distribution
+--------------------------------------------------------------------------------------------------------------------------------------------
+Column             Min       0.1%ile   1st %ile  5th %ile  25th %ile median    75th %ile 95th %ile 99th %ile 99.9%ile  Max      
+--------------------------------------------------------------------------------------------------------------------------------------------
+trip_distance      0,00      0,00      0,10      0,48      0,99      1,65      3,10      11,26     19,13     27,35     329,63   
+fare_amount        -800,00   0,01      3,00      4,50      6,50      9,50      15,50     39,00     52,00     92,00     7011,50  
+extra              -80,00    0,00      0,00      0,00      0,00      0,00      0,50      1,00      1,00      4,50      83,00    
+mta_tax            -0,50     0,00      0,50      0,50      0,50      0,50      0,50      0,50      0,50      0,50      80,80    
+tip_amount         -41,00    0,00      0,00      0,00      0,00      1,45      2,46      6,65      11,71     20,00     490,00   
+tolls_amount       -20,00    0,00      0,00      0,00      0,00      0,00      0,00      5,76      5,76      16,50     910,50   
+improvement_surcharge -0,30     0,30      0,30      0,30      0,30      0,30      0,30      0,30      0,30      0,30      0,30     
+
+
+4.3 FLAG VARIABLE -  store_and_fwd_flag (Distribution)
+--------------------------------------------------------------------------------
+Value                          Count           Percentage
+--------------------------------------------------------------------------------
+N                              7994235         99,32%
+Y                              46730           0,58%
+NULL                           8129            0,10%
+
+
+4.4 DURATION - Trip Duration Analysis (in minutes)
+--------------------------------------------------------------------------------------------------------------------------------------------
+Min       0.1%ile   1st %ile  5th %ile  25th %ile median    75th %ile 95th %ile 99th %ile 99.9%ile  Max       Mean     
+--------------------------------------------------------------------------------------------------------------------------------------------
+-9908,82  0,03      1,08      2,97      6,80      11,62     19,43     39,60     64,57     1426,00   12963,97  18,27    
+
+
+4.5 TRIP DATE DISTRIBUTION - Pickup Date Analysis
+--------------------------------------------------------------------------------
+Purpose: Identify date ranges in dataset and filter invalid dates
+         Expected: September 2018 (2018-09-01 to 2018-09-30)
+--------------------------------------------------------------------------------
+
+Distribution by Year-Month:
+Year-Month      Count           Percentage      Status              
+--------------------------------------------------------------------------------
+2001-01         1               0,00%          ⚠️ Unexpected       
+2002-12         3               0,00%          ⚠️ Unexpected       
+2008-12         30              0,00%          ⚠️ Unexpected       
+2009-01         26              0,00%          ⚠️ Unexpected       
+2017-09         1               0,00%          ⚠️ Unexpected       
+2018-08         248             0,00%          ⚠️ Unexpected       
+2018-09         8048626         99,99%         ✓ Expected          
+2018-10         80              0,00%          ⚠️ Unexpected       
+2018-11         30              0,00%          ⚠️ Unexpected       
+2018-12         19              0,00%          ⚠️ Unexpected       
+2019-01         13              0,00%          ⚠️ Unexpected       
+2019-02         7               0,00%          ⚠️ Unexpected       
+2019-03         5               0,00%          ⚠️ Unexpected       
+2019-04         1               0,00%          ⚠️ Unexpected       
+2019-05         3               0,00%          ⚠️ Unexpected       
+2021-09         1               0,00%          ⚠️ Unexpected       
+
+
+Distribution by Year:
+Year            Count           Percentage     
+--------------------------------------------------
+2001            1               0,00%
+2002            3               0,00%
+2008            30              0,00%
+2009            26              0,00%
+2017            1               0,00%
+2018            8049003         100,00%
+2019            29              0,00%
+2021            1               0,00%
+
+
+Date Range Summary:
+--------------------------------------------------------------------------------
+Earliest pickup date: 2001-01-01
+Latest pickup date: 2021-09-13
+
+Trips in September 2018: 8.048.626 (99,99%)
+Trips NOT in September 2018: 468 (0,01%)
+
+⚠️  WARNING: Dataset contains trips outside September 2018!
+   Consider filtering these trips for accurate analysis.
+
+================================================================================
+STEP 4: NEGATIVE VALUES CHECK - FARE COMPONENTS
+================================================================================
+Checking for negative values in fare_amount related columns
+--------------------------------------------------------------------------------
+Column                    Negative Count  Percentage      Min Value           
+--------------------------------------------------------------------------------
+fare_amount               6134            0,08%          $-800,00            ⚠️ ISSUE
+extra                     3028            0,04%          $-80,00             ⚠️ ISSUE
+mta_tax                   5958            0,07%          $-0,50              ⚠️ ISSUE
+tip_amount                46              0,00%          $-41,00             ⚠️ ISSUE
+tolls_amount              96              0,00%          $-20,00             ⚠️ ISSUE
+
+
+Payment Type Breakdown for Records with Negative fare_amount:
+--------------------------------------------------------------------------------
+Payment Type                   Count           Percentage      Description         
+--------------------------------------------------------------------------------
+3                              3734            60,87%         No charge           
+4                              2081            33,93%         Dispute             
+2                              317             5,17%          Cash                
+0                              2               0,03%          Flex Fare trip      
+
+Total records with negative fare_amount: 6134

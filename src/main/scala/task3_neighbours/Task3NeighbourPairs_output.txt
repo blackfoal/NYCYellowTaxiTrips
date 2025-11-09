@@ -1,0 +1,105 @@
+================================================================================
+TASK 3: TOP 10 LOCATION PAIRS (INCLUDING NEIGHBOURS)
+================================================================================
+
+--------------------------------------------------------------------------------
+OUTLIER REMOVAL
+--------------------------------------------------------------------------------
+
+Total records: 8049094
+
+Using the result from Task2: 73,86 miles as outlier threshold...
+
+Outlier Removal:
+  Records removed: 80 (0,00%)
+  Records remaining: 8049014
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TOP 10 LOCATION PAIRS WITH NEIGHBOR INCLUSION
+================================================================================
+
+This task calculates top 10 location pairs by total_amount, where each pair
+includes contributions from its 3x3 neighborhood (neighboring locations).
+
+Example: Pair (5,5) includes trips from:
+  (4,4), (4,5), (4,6), (5,4), (5,5), (5,6), (6,4), (6,5), (6,6)
+
+Note: Outlier filtering has been applied (trip_distance <= 73.86 miles)
+      Only valid trips with non-null locations and amounts are included.
+
+Optimization: Aggregate first, then expand (avoids expanding millions of trips)
+
+--------------------------------------------------------------------------------
+STEP 1: AGGREGATE TRIPS BY ACTUAL LOCATION PAIRS
+--------------------------------------------------------------------------------
+Purpose: Reduce data volume by grouping trips with same (PULocationID, DOLocationID)
+         before expanding to neighbors. This is much more efficient.
+
+Result: 31.319 unique (PULocationID, DOLocationID) pairs found
+        (down from 8049014 individual trips)
+
+Sample of aggregated pairs (first 20):
+PULocationID    DOLocationID    Total Amount         Trip Count     
+----------------------------------------------------------------------
+264             264             $1.351.332,81        83.730         
+138             230             $657.116,97          12.969         
+132             230             $642.761,12          9.874          
+132             265             $489.131,11          5.167          
+138             161             $435.552,80          8.878          
+237             236             $429.023,92          50.467         
+230             138             $425.031,91          8.730          
+138             162             $424.911,42          9.308          
+236             237             $402.878,62          43.125         
+132             48              $398.055,03          6.142          
+
+--------------------------------------------------------------------------------
+STEP 2: EXPAND TO CANONICAL PAIRS (3x3 NEIGHBOR GRID)
+--------------------------------------------------------------------------------
+Purpose: Each pair (x, y) generates 9 canonical pairs representing its neighborhood:
+         (x-1,y-1), (x-1,y), (x-1,y+1), (x,y-1), (x,y), (x,y+1), (x+1,y-1), (x+1,y), (x+1,y+1)
+         Each canonical pair receives the same total_amount from the original pair.
+
+Processing...
+
+Result: 281.446 rows after expansion (from 31.319 unique pairs)
+        Average expansion: 8,99x (slightly less than 9x due to edge filtering)
+
+--------------------------------------------------------------------------------
+STEP 3: AGGREGATE BY CANONICAL PAIRS AND FIND TOP 10
+--------------------------------------------------------------------------------
+Purpose: Sum total_amount for each canonical pair across all contributing neighbors.
+         Each canonical pair now includes contributions from its 3x3 neighborhood.
+
+Processing...
+
+Result: Top 10 pairs identified
+
+================================================================================
+TOP 10 CANONICAL LOCATION PAIRS BY TOTAL_AMOUNT (INCLUDING NEIGHBORS)
+================================================================================
+
+Each pair includes contributions from its 3x3 neighborhood.
+The total_amount represents the sum from all neighboring location pairs.
+
+Rank  PULocationID    DOLocationID    Total Amount         Total Trip Count    
+--------------------------------------------------------------------------------
+1     237             237             $1.955.838,99        223.602             
+2     264             264             $1.803.238,89        97.872              
+3     265             264             $1.728.390,49        88.155              
+4     264             265             $1.728.163,12        87.997              
+5     265             265             $1.723.327,55        87.830              
+6     236             237             $1.646.630,22        193.161             
+7     237             236             $1.631.813,02        191.379             
+8     263             263             $1.569.211,82        113.436             
+9     238             237             $1.555.514,22        170.763             
+10    263             264             $1.536.449,37        101.320             
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+
+Note: These results differ from Task 2 because each canonical pair
+      includes revenue from its neighboring location pairs, not just
+      the exact (PU, DO) combination.
