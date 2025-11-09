@@ -24,6 +24,8 @@ sbt "runMain task1_exploration.Task1Exploration /path/to/data"
 
 Dependencies are automatically resolved by sbt from `build.sbt`.
 
+**Note:** The `build.sbt` file sets `javaHome` to a specific Java 11 path (configured for macOS with Homebrew). If you're using a different system or Java installation, you may need to update the `javaHome` path in `build.sbt` to point to your Java 11 installation, or remove that line if you have Java 11 set as your default `JAVA_HOME`.
+
 ## Project Structure
 
 The project has the following directory structure:
